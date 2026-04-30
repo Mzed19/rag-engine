@@ -1,6 +1,6 @@
-from app.rag.ingest import embedAndStore
+from app.core.vector_store import vector_store
+from app.core.embeddings import embed
 
-class Ingestion:     
-    def ingest(self, texts: list[str]):
-        print(len(texts), " texts sended to ingestion")
-        embedAndStore(texts)
+def embedAndStore(texts):
+    embeddings = embed(texts)
+    vector_store.add(texts, embeddings)

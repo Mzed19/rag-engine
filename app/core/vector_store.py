@@ -3,21 +3,26 @@ import numpy as np
 
 class VectorStore:
     def __init__(self, dim: int):
-        self.index = faiss.IndexFlatL2(dim)
+        self.index = faiss.IndexFlatIP(dim)  # 🔥 AQUI
         self.documents = []
 
-    def add(self, texts: list[str], embeddings: np.ndarray):
+    def add(self, texts, embeddings):
+        embeddings = embeddings.astype("float32")
+        faiss.normalize_L2(embeddings)
+
         self.index.add(embeddings)
         self.documents.extend(texts)
-        print(len(self.documents), " documents stored in vector store")
 
-    def search(self, query_embedding: np.ndarray, k=5):
+    def search(self, query_embedding, k=5):
         query_embedding = np.array(query_embedding).astype("float32")
+        faiss.normalize_L2(query_embedding)
 
-        distances, indices = self.index.search(query_embedding, k)
+        scores, indices = self.index.search(query_embedding, k)
 
         return [
-            self.documents[int(i)]
-            for i in indices[0]
+            (self.documents[int(i)], float(scores[0][idx]))
+            for idx, i in enumerate(indices[0])
             if i != -1
         ]
+
+vector_store = VectorStore(dim=384)

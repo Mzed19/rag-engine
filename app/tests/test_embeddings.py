@@ -1,17 +1,17 @@
-from app.core.ingestion import Ingestion
-from app.core.vector_store import VectorStore
+from app.core.vector_store import vector_store
 from app.core.embeddings import embed
-
-ingestion = Ingestion()
-store = VectorStore(dim=384)
+from app.core.ingestion import embedAndStore
 
 texts = [
-    "Gato",
-    "Cachorro",
-    "Edifício"
+    "Os equinos são animais de grande porte",
+    "Felinos são animais domésticos populares, conhecidos por sua independência e habilidades de caça",
+    "Gatos são conhecidos por sua agilidade e independência",
+    "Existem diversos tipos de cães, como o pastor alemão, o labrador e o buldogue",
+    "Felinos são animais da mesma família dos gatos",
+    "Um gato foi atropelado ontem na rua principal",
 ]
-    
-ingestion.ingest(texts)
 
-searched = store.search(embed(["Gato"]))
+embedAndStore(texts)
+
+searched = vector_store.search(embed(["Me explique sobre gatos"]))
 print(searched)
